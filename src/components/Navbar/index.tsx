@@ -1,7 +1,11 @@
 import { Close, Search } from '@mui/icons-material'
 import { Box, InputAdornment, TextField, Typography } from '@mui/material'
 
-export default function Navbar() {
+interface IProps {
+  setSearch: (search: string) => void
+}
+
+export default function Navbar({ setSearch }: IProps) {
   return (
     <Box width="100%" pb={1.5} pt={1.5} boxShadow="1px 1px 5px grey">
       <Box
@@ -26,6 +30,7 @@ export default function Navbar() {
             }}
             placeholder="Pesquisar Notas"
             size="small"
+            onChange={(e) => setSearch(e.target.value)}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="start">

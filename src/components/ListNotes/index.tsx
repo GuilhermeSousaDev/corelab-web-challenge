@@ -4,11 +4,16 @@ import CommonNotesComponent from './CommonNotesComponent'
 import { useEffect, useState } from 'react'
 import { NoteService } from '../../api/NoteService'
 import { INote } from '../../models'
+import SearchNotesComponent from './SearchNotesComponent'
 
-export default function ListNotes() {
+interface IProps {
+  search: string
+}
 
+export default function ListNotes({ search }: IProps) {
   const [favoritesNotes, setFavoritesNotes] = useState<INote[]>([])
   const [commonNotes, setCommonNotes] = useState<INote[]>([])
+  const [allNotes, setAllNotes] = useState<INote[]>([])
 
   useEffect(() => {
     (async () => {
@@ -16,8 +21,11 @@ export default function ListNotes() {
 
       const favorites: INote[] = []
       const commons: INote[] = []
+      const all: INote[] = []
 
       notes.forEach((note) => {
+        all.push(note)
+
         if (note.favorite) {
           favorites.push(note)
         } else {
@@ -27,20 +35,25 @@ export default function ListNotes() {
 
       setFavoritesNotes(favorites)
       setCommonNotes(commons)
+      setAllNotes(all)
     })()
   }, [])
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      gap={5}
-      width="90%"
-      mb={5}
-    >
-      <FavoriteNotesComponent notes={favoritesNotes} />
+    <Box display="flex" flexDirection="column" gap={5} width="90%" mb={5}>
+      {search ? (
+        <SearchNotesComponent
+          notes={allNotes.filter(
+            (note) => note.title.includes(search) || note.task.includes(search)
+          )}
+        />
+      ) : (
+        <>
+          <FavoriteNotesComponent notes={favoritesNotes} />
 
-      <CommonNotesComponent notes={commonNotes} />
+          <CommonNotesComponent notes={commonNotes} />
+        </>
+      )}
     </Box>
   )
 }
